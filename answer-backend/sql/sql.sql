@@ -19,9 +19,87 @@ create table if not exists user
     userRole     varchar(256)           default 'user' not null comment '用户角色：user/admin',
     userStatus   tinyint                default 0 not null comment '用户状态（0正常 1停用）',
     creator      varchar(64)   NULL     DEFAULT '' COMMENT '创建者',
-    createTime  datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    createTime   datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updater      varchar(64)   NULL     DEFAULT '' COMMENT '更新者',
-    updateTime  datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    updateTime   datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     deleted      bit(1)        NOT NULL DEFAULT b'0' COMMENT '是否删除',
     index idx_unionId (unionId)
 ) comment '用户表' collate = utf8mb4_unicode_ci;
+
+
+-- 应用表
+create table if not exists app
+(
+    id              bigint auto_increment comment 'id' primary key,
+    appName         varchar(128)  not null comment '应用名',
+    appDesc         varchar(2048) null comment '应用描述',
+    appIcon         varchar(1024) null comment '应用图标',
+    appType         tinyint                default 0 not null comment '应用类型（0-得分类，1-测评类）',
+    scoringStrategy tinyint                default 0 not null comment '评分策略（0-自定义，1-AI）',
+    reviewStatus    int                    default 0 not null comment '审核状态：0-待审核, 1-通过, 2-拒绝',
+    reviewMessage   varchar(512)  null comment '审核信息',
+    reviewerId      bigint        null comment '审核人 id',
+    reviewTime      datetime      null comment '审核时间',
+    userId          bigint        not null comment '创建用户 id',
+    creator         varchar(64)   NULL     DEFAULT '' COMMENT '创建者',
+    createTime      datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updater         varchar(64)   NULL     DEFAULT '' COMMENT '更新者',
+    updateTime      datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    deleted         bit(1)        NOT NULL DEFAULT b'0' COMMENT '是否删除',
+    index idx_appName (appName)
+) comment '应用' collate = utf8mb4_unicode_ci;
+
+-- 题目表
+create table if not exists question
+(
+    id              bigint auto_increment comment 'id' primary key,
+    questionContent text        null comment '题目内容（json格式）',
+    appId           bigint      not null comment '应用 id',
+    creator         varchar(64) NULL     DEFAULT '' COMMENT '创建者',
+    createTime      datetime    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updater         varchar(64) NULL     DEFAULT '' COMMENT '更新者',
+    updateTime      datetime    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    deleted         bit(1)      NOT NULL DEFAULT b'0' COMMENT '是否删除',
+    index idx_appId (appId)
+) comment '题目' collate = utf8mb4_unicode_ci;
+
+-- 评分结果表
+create table if not exists scoring_result
+(
+    id               bigint auto_increment comment 'id' primary key,
+    resultName       varchar(128)  not null comment '结果名称，如物流师',
+    resultDesc       text          null comment '结果描述',
+    resultPicture    varchar(1024) null comment '结果图片',
+    resultProp       varchar(128)  null comment '结果属性集合 JSON，如 [I,S,T,J]',
+    resultScoreRange int           null comment '结果得分范围，如 80，表示 80及以上的分数命中此结果',
+    appId            bigint        not null comment '应用 id',
+    creator          varchar(64)   NULL     DEFAULT '' COMMENT '创建者',
+    createTime       datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updater          varchar(64)   NULL     DEFAULT '' COMMENT '更新者',
+    updateTime       datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    deleted          bit(1)        NOT NULL DEFAULT b'0' COMMENT '是否删除',
+    index idx_appId (appId)
+) comment '评分结果' collate = utf8mb4_unicode_ci;
+
+
+-- 用户答题记录表
+create table if not exists user_answer
+(
+    id              bigint auto_increment primary key,
+    appId           bigint        not null comment '应用 id',
+    appType         tinyint                default 0 not null comment '应用类型（0-得分类，1-角色测评类）',
+    scoringStrategy tinyint                default 0 not null comment '评分策略（0-自定义，1-AI）',
+    choices         text          null comment '用户答案（JSON 数组）',
+    resultId        bigint        null comment '评分结果 id',
+    resultName      varchar(128)  null comment '结果名称，如物流师',
+    resultDesc      text          null comment '结果描述',
+    resultPicture   varchar(1024) null comment '结果图标',
+    resultScore     int           null comment '得分',
+    creator         varchar(64)   NULL     DEFAULT '' COMMENT '创建者',
+    createTime      datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updater         varchar(64)   NULL     DEFAULT '' COMMENT '更新者',
+    updateTime      datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    deleted         bit(1)        NOT NULL DEFAULT b'0' COMMENT '是否删除',
+    index idx_appId (appId),
+    index idx_userId (creator)
+) comment '用户答题记录' collate = utf8mb4_unicode_ci;

@@ -48,6 +48,11 @@ public interface GlobalErrorCodeConstants {
     ErrorCode UPDATE_FAIL = new ErrorCode(4223, "更新失败");
     ErrorCode DELETE_FAIL = new ErrorCode(4224, "删除失败");
 
+    ErrorCode REVIEW_REPEAT = new ErrorCode(4225, "请勿重复审核");
+
+    ErrorCode APP_NOT_EXIST = new ErrorCode(4042, "应用不存在");
+    ErrorCode APP_REVIEW_FAIL = new ErrorCode(4226, "审核失败");
+
     //
 
 

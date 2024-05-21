@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xzhang.boot.model.entity.ScoringResult">
+
+    <resultMap id="BaseResultMap" type="cn.xzhang.boot.model.entity.ScoringResult">
+                <id property="id" column="id" jdbcType="BIGINT"/>
+                    <result property="resultName" column="resultName" jdbcType="VARCHAR"/>
+                    <result property="resultDesc" column="resultDesc" jdbcType="CLOB"/>
+                    <result property="resultPicture" column="resultPicture" jdbcType="VARCHAR"/>
+                    <result property="resultProp" column="resultProp" jdbcType="VARCHAR"/>
+                    <result property="resultScoreRange" column="resultScoreRange" jdbcType="INTEGER"/>
+                    <result property="appId" column="appId" jdbcType="BIGINT"/>
+                    <result property="creator" column="creator" jdbcType="VARCHAR"/>
+                    <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+                    <result property="updater" column="updater" jdbcType="VARCHAR"/>
+                    <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+                    <result property="deleted" column="deleted" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+            id,
+            resultName,
+            resultDesc,
+            resultPicture,
+            resultProp,
+            resultScoreRange,
+            appId,
+            creator,
+            createTime,
+            updater,
+            updateTime,
+            deleted
+    </sql>
+</mapper>
