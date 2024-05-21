@@ -1,0 +1,36 @@
+.indexPage {
+  position: relative;
+
+  .title {
+    color: #FF7F00;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding-top: 48rpx;
+  }
+  .at-article__h1{
+    margin-top: 0;
+  }
+
+  .subTitle {
+    color: #FF7F00;
+    font-family: 'Arial', sans-serif;
+    margin-bottom: 48rpx;
+  }
+
+  .enterBtn {
+    width: 60vw;
+    position: absolute;
+    top: 858rpx;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .background{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+  }
+}
