@@ -3,10 +3,12 @@ package cn.xzhang.boot.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xzhang.boot.common.exception.ServiceException;
 import cn.xzhang.boot.common.pojo.PageResult;
+import cn.xzhang.boot.mapper.AppMapper;
 import cn.xzhang.boot.mapper.ScoringResultMapper;
 import cn.xzhang.boot.model.dto.scoringresult.ScoringResultAddReqDTO;
 import cn.xzhang.boot.model.dto.scoringresult.ScoringResultPageReqDTO;
 import cn.xzhang.boot.model.dto.scoringresult.ScoringResultUpdateReqDTO;
+import cn.xzhang.boot.model.entity.App;
 import cn.xzhang.boot.model.entity.ScoringResult;
 import cn.xzhang.boot.model.vo.scoringresult.ScoringResultSimpleVo;
 import cn.xzhang.boot.model.vo.scoringresult.ScoringResultVo;
@@ -33,6 +35,10 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
     @Resource
     private ScoringResultMapper scoringResultMapper;
 
+    @Resource
+    private AppMapper appMapper;
+
+
     /**
      * 添加新评分结果
      *
@@ -41,6 +47,12 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
      */
     @Override
     public long addScoringResult(ScoringResultAddReqDTO scoringResultReqDTO) {
+        if (scoringResultReqDTO.getAppId() == null) {
+            throw exception(BAD_REQUEST);
+        }
+        if (appMapper.selectCount(App::getId, scoringResultReqDTO.getAppId()) == 0) {
+            throw exception(APP_NOT_EXIST);
+        }
         ScoringResult scoringResult = new ScoringResult();
         BeanUtil.copyProperties(scoringResultReqDTO, scoringResult);
         if (!this.save(scoringResult)) {
@@ -59,6 +71,10 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
     public boolean updateScoringResult(ScoringResultUpdateReqDTO scoringResultReqDTO) {
         if (scoringResultReqDTO.getId() == null) {
             throw exception(BAD_REQUEST);
+        }
+        // 判断应用是否存在
+        if (appMapper.selectCount(App::getId, scoringResultReqDTO.getAppId()) == 0) {
+            throw exception(APP_NOT_EXIST);
         }
         ScoringResult scoringResult = new ScoringResult();
         BeanUtil.copyProperties(scoringResultReqDTO, scoringResult);

@@ -38,7 +38,7 @@ public class ScoringResultBaseDTO implements Serializable {
     @Schema(description = "结果得分范围，如 80，表示 80及以上的分数命中此结果",requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer resultScoreRange;
 
-    @Schema(description = "应用 id")
+    @Schema(description = "应用 id",requiredMode = Schema.RequiredMode.REQUIRED)
     private Long appId;
 
 

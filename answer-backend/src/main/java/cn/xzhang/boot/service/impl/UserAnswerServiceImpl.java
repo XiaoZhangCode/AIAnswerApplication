@@ -1,12 +1,15 @@
 package cn.xzhang.boot.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
 import cn.xzhang.boot.common.exception.ServiceException;
 import cn.xzhang.boot.common.pojo.PageResult;
+import cn.xzhang.boot.mapper.AppMapper;
 import cn.xzhang.boot.mapper.UserAnswerMapper;
 import cn.xzhang.boot.model.dto.useranswer.UserAnswerAddReqDTO;
 import cn.xzhang.boot.model.dto.useranswer.UserAnswerPageReqDTO;
 import cn.xzhang.boot.model.dto.useranswer.UserAnswerUpdateReqDTO;
+import cn.xzhang.boot.model.entity.App;
 import cn.xzhang.boot.model.entity.UserAnswer;
 import cn.xzhang.boot.model.vo.useranswer.UserAnswerSimpleVo;
 import cn.xzhang.boot.model.vo.useranswer.UserAnswerVo;
@@ -32,6 +35,9 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
 
     @Resource
     private UserAnswerMapper userAnswerMapper;
+    @Resource
+    private AppMapper appMapper;
+
 
     /**
      * 添加新答题记录
@@ -41,8 +47,13 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
      */
     @Override
     public long addUserAnswer(UserAnswerAddReqDTO userAnswerReqDTO) {
+        // 判断应用是否存在
+        if (appMapper.selectCount(App::getId, userAnswerReqDTO.getAppId()) == 0) {
+            throw exception(APP_NOT_EXIST);
+        }
         UserAnswer userAnswer = new UserAnswer();
         BeanUtil.copyProperties(userAnswerReqDTO, userAnswer);
+        userAnswer.setChoices(JSONUtil.toJsonStr(userAnswerReqDTO.getChoices()));
         if (!this.save(userAnswer)) {
             throw exception(ADD_FAIL);
         }
@@ -60,8 +71,13 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         if (userAnswerReqDTO.getId() == null) {
             throw exception(BAD_REQUEST);
         }
+        // 判断应用是否存在
+        if (appMapper.selectCount(App::getId, userAnswerReqDTO.getAppId()) == 0) {
+            throw exception(APP_NOT_EXIST);
+        }
         UserAnswer userAnswer = new UserAnswer();
         BeanUtil.copyProperties(userAnswerReqDTO, userAnswer);
+        userAnswer.setChoices(JSONUtil.toJsonStr(userAnswerReqDTO.getChoices()));
         boolean b = this.updateById(userAnswer);
         if (!b) {
             throw exception(UPDATE_FAIL);
@@ -101,6 +117,7 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         }
         UserAnswerSimpleVo userAnswerSimpleVo = new UserAnswerSimpleVo();
         BeanUtil.copyProperties(userAnswer, userAnswerSimpleVo);
+        userAnswerSimpleVo.setChoices(JSONUtil.toJsonStr(userAnswer.getChoices()));
         return userAnswerSimpleVo;
     }
 
@@ -119,6 +136,7 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         List<UserAnswerVo> userAnswerVos = pageResult.getList().stream().map(userAnswer -> {
             UserAnswerVo userAnswerVo = new UserAnswerVo();
             BeanUtil.copyProperties(userAnswer, userAnswerVo);
+            userAnswerVo.setChoices(JSONUtil.toJsonStr(userAnswer.getChoices()));
             return userAnswerVo;
         }).collect(Collectors.toList());
         return new PageResult<>(userAnswerVos, pageResult.getTotal());
@@ -131,6 +149,7 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         }
         UserAnswerVo userAnswerVo = new UserAnswerVo();
         BeanUtil.copyProperties(userAnswer, userAnswerVo);
+        userAnswerVo.setChoices(JSONUtil.toJsonStr(userAnswer.getChoices()));
         return userAnswerVo;
     }
 

@@ -1,11 +1,13 @@
 package cn.xzhang.boot.model.vo.question;
 
+import cn.xzhang.boot.model.dto.question.QuestionDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 题目VO
@@ -19,7 +21,7 @@ public class QuestionVo implements Serializable {
     @Schema(description = "id")
     private Long id;
     @Schema(description = "题目内容（json格式）",requiredMode = Schema.RequiredMode.REQUIRED)
-    private String questionContent;
+    private List<QuestionDTO> questionContent;
 
     @Schema(description = "应用 id")
     private Long appId;

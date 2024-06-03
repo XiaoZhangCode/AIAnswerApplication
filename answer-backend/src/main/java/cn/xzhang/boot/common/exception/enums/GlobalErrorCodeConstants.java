@@ -9,50 +9,46 @@ import cn.xzhang.boot.common.exception.ErrorCode;
 public interface GlobalErrorCodeConstants {
 
 
-    ErrorCode SUCCESS = new ErrorCode(0, "成功");
-    ErrorCode FAIL = new ErrorCode(1, "失败");
+    // ===== 成功与失败的基本乐章 =====
+    ErrorCode SUCCESS = new ErrorCode(0, "完美！一切顺利！");
+    ErrorCode FAIL = new ErrorCode(1, "哎呀，出错了呢！");
 
+    // ========== 客户端小差错集锦 ==========
+    ErrorCode BAD_REQUEST = new ErrorCode(400, "调皮的参数，快回去检查一下吧！");
+    ErrorCode BAD_REQUEST_PARAMS_ERROR = new ErrorCode(400, "参数有点淘气了，{} 需要你哄一哄！");
+    ErrorCode UNAUTHORIZED = new ErrorCode(401, "迷路了吗？先登录再说！");
+    ErrorCode FORBIDDEN = new ErrorCode(403, "嘘～这里可是禁地哦，没有通行证的！");
+    ErrorCode NOT_FOUND = new ErrorCode(404, "找什么呢？这里好像什么也没有...");
+    ErrorCode METHOD_NOT_ALLOWED = new ErrorCode(405, "方法不对头，换个姿势试试？");
+    ErrorCode LOCKED = new ErrorCode(423, "稍安勿躁，让系统喘口气再试！");
+    ErrorCode TOO_MANY_REQUESTS = new ErrorCode(429, "慢点来，别急，喘口气再继续！");
+    ErrorCode BAD_REQUEST_PARAMS = new ErrorCode(400, "空空如也，参数不填怎么行？");
+    ErrorCode BAD_REQUEST_PARAM_ERROR = new ErrorCode(400, "参数唱反调了，需要调教一番！");
 
-    // ========== 客户端错误段 ==========
-    ErrorCode BAD_REQUEST = new ErrorCode(400, "请求参数不正确");
-    ErrorCode BAD_REQUEST_PARAMS_ERROR = new ErrorCode(400, "请求参数不正确,{}");
-    ErrorCode UNAUTHORIZED = new ErrorCode(401, "账号未登录");
-    ErrorCode FORBIDDEN = new ErrorCode(403, "没有该操作权限");
-    ErrorCode NOT_FOUND = new ErrorCode(404, "请求未找到");
-    ErrorCode METHOD_NOT_ALLOWED = new ErrorCode(405, "请求方法不正确");
-    ErrorCode LOCKED = new ErrorCode(423, "请求失败，请稍后重试");
-    ErrorCode TOO_MANY_REQUESTS = new ErrorCode(429, "请求过于频繁，请稍后重试");
-    ErrorCode BAD_REQUEST_PARAMS = new ErrorCode(400, "请求参数不能为空");
-    ErrorCode BAD_REQUEST_PARAM_ERROR = new ErrorCode(400, "请求参数错误");
+    // ========== 服务端小坎坷 ==========
+    ErrorCode INTERNAL_SERVER_ERROR = new ErrorCode(500, "哎哟，系统扭到腰了，稍等我揉一揉...");
 
-    // ========== 服务端错误段 ==========
-    ErrorCode INTERNAL_SERVER_ERROR = new ErrorCode(500, "系统异常");
+    // ========== 自定义趣味乐章 ==========
+    ErrorCode UNKNOWN = new ErrorCode(999, "这...这是什么神秘代码？！");
+    ErrorCode PASSWORD_NOT_MATCH = new ErrorCode(4001, "左右互搏？密码两边得一致哦！");
+    ErrorCode PASSWORD_LENGTH_NOT_ENOUGH = new ErrorCode(4002, "短了点哦，密码得至少8位字符长呢！");
 
+    ErrorCode USER_NAME_REPEAT = new ErrorCode(4091, "这用户名已经名花有主啦！换一个呗？");
 
+    ErrorCode USER_REGISTER_FAIL = new ErrorCode(4221, "注册翻车了，咱们重新发动一次吧！");
 
+    ErrorCode USER_NOT_EXIST = new ErrorCode(4041, "这位大侠，您在江湖上还没留名呢...");
 
-    // ========== 自定义错误段 ==========
-    ErrorCode UNKNOWN = new ErrorCode(999, "未知错误");
-    ErrorCode PASSWORD_NOT_MATCH = new ErrorCode(4001, "两次输入的密码不一致");
-    ErrorCode PASSWORD_LENGTH_NOT_ENOUGH = new ErrorCode(4002, "密码长度不能小于8");
+    ErrorCode USER_NOT_NORMAL = new ErrorCode(4031, "账号冬眠中，请解冻后再来闯荡江湖吧！");
 
-    ErrorCode USER_NAME_REPEAT = new ErrorCode(4091, "账号重复");
+    ErrorCode ADD_FAIL = new ErrorCode(4222, "新增计划泡汤了，不如我们再接再厉？");
+    ErrorCode UPDATE_FAIL = new ErrorCode(4223, "更新翻车现场，调整策略再次出发！");
+    ErrorCode DELETE_FAIL = new ErrorCode(4224, "删删减减，这次没成功，不妨再试一次？");
 
-    ErrorCode USER_REGISTER_FAIL = new ErrorCode(4221, "注册失败");
+    ErrorCode REVIEW_REPEAT = new ErrorCode(4225, "审核别太着急，一次就够啦！");
 
-    ErrorCode USER_NOT_EXIST = new ErrorCode(4041, "用户不存在");
-
-    ErrorCode USER_NOT_NORMAL = new ErrorCode(4031, "此账号已被冻结");
-
-    ErrorCode ADD_FAIL = new ErrorCode(4222, "添加失败");
-    ErrorCode UPDATE_FAIL = new ErrorCode(4223, "更新失败");
-    ErrorCode DELETE_FAIL = new ErrorCode(4224, "删除失败");
-
-    ErrorCode REVIEW_REPEAT = new ErrorCode(4225, "请勿重复审核");
-
-    ErrorCode APP_NOT_EXIST = new ErrorCode(4042, "应用不存在");
-    ErrorCode APP_REVIEW_FAIL = new ErrorCode(4226, "审核失败");
-
+    ErrorCode APP_NOT_EXIST = new ErrorCode(4042, "应用玩失踪？确认一下它是否存在吧！");
+    ErrorCode APP_REVIEW_FAIL = new ErrorCode(4226, "审核之路多坎坷，这次没过，咱们再接再厉！");
     //
 
 

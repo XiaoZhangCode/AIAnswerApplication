@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -16,11 +17,11 @@ import java.io.Serializable;
 @Schema(name = "题目基础信息类", description = "题目基础信息")
 public class QuestionBaseDTO implements Serializable {
 
-    @NotNull(message = "题目内容（json格式）不能为空")
-    @Schema(description = "题目内容（json格式）",requiredMode = Schema.RequiredMode.REQUIRED)
-    private String questionContent;
+    @NotNull(message = "题目内容不能为空")
+    @Schema(description = "题目内容",requiredMode = Schema.RequiredMode.REQUIRED)
+    private List<QuestionDTO> questionContent;
 
-    @Schema(description = "应用 id")
+    @Schema(description = "应用 id",requiredMode = Schema.RequiredMode.REQUIRED)
     private Long appId;
 
 

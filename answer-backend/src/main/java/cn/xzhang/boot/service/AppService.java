@@ -4,6 +4,7 @@ import cn.xzhang.boot.common.pojo.PageResult;
 import cn.xzhang.boot.model.dto.app.AppAddReqDTO;
 import cn.xzhang.boot.model.dto.app.AppPageReqDTO;
 import cn.xzhang.boot.model.dto.app.AppUpdateReqDTO;
+import cn.xzhang.boot.model.dto.app.ReviewRequestDTO;
 import cn.xzhang.boot.model.entity.App;
 import cn.xzhang.boot.model.vo.app.AppSimpleVo;
 import cn.xzhang.boot.model.vo.app.AppVo;
@@ -62,4 +63,10 @@ public interface AppService extends IService<App> {
      * @return 返回一个包含应用信息的AppVo对象。
      */
     AppVo getAppVO(App app);
+
+    /**
+     * 审核应用
+     * @param reviewRequest 审核请求
+     */
+    void reviewApp(ReviewRequestDTO reviewRequest);
 }

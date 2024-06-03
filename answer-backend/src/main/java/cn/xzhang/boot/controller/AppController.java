@@ -131,42 +131,14 @@ public class AppController {
      * @return 返回一个布尔值的审核结果，成功为true，失败为false。
      */
     @PostMapping("/review")
+    @Operation(summary = "应用审核")
     @SaCheckRole(UserConstant.ADMIN_ROLE)
     public CommonResult<Boolean> doAppReview(@RequestBody ReviewRequestDTO reviewRequest) {
         // 校验请求体是否为空
         if (reviewRequest == null) {
             return CommonResult.error(BAD_REQUEST_PARAMS);
         }
-        Long id = reviewRequest.getId();
-        Integer reviewStatus = reviewRequest.getReviewStatus();
-
-        // 校验审核状态的有效性
-        ReviewStatusEnum reviewStatusEnum = ReviewStatusEnum.getEnumByValue(reviewStatus);
-        if (id == null || reviewStatusEnum == null) {
-            throw exception(BAD_REQUEST_PARAM_ERROR);
-        }
-
-        // 检查应用是否存在
-        App oldApp = appService.getById(id);
-        if (oldApp == null) {
-            throw exception(APP_NOT_EXIST);
-        }
-
-        // 判断是否已经是相同的审核状态
-        if (oldApp.getReviewStatus().equals(reviewStatus)) {
-            throw exception(REVIEW_REPEAT);
-        }
-
-        // 更新应用的审核状态
-        App app = new App();
-        app.setId(id);
-        app.setReviewStatus(reviewStatus);
-        app.setReviewerId(StpUtil.getLoginIdAsLong());
-        app.setReviewTime(new Date());
-        boolean result = appService.updateById(app);
-        if (!result) {
-            throw exception(APP_REVIEW_FAIL);
-        }
+        appService.reviewApp(reviewRequest);
         return CommonResult.success(true);
     }
 

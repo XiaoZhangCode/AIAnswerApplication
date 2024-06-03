@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -18,7 +19,7 @@ import java.io.Serializable;
 @Schema(name = "评分结果基础信息类", description = "评分结果基础信息")
 public class UserAnswerBaseDTO implements Serializable {
 
-    @Schema(description = "应用 id")
+    @Schema(description = "应用 id",requiredMode = Schema.RequiredMode.REQUIRED)
     private Long appId;
 
     @Schema(description = "应用类型（0-得分类，1-角色测评类）")
@@ -29,7 +30,7 @@ public class UserAnswerBaseDTO implements Serializable {
 
     @NotNull(message = "用户答案（JSON 数组）不能为空")
     @Schema(description = "用户答案（JSON 数组）",requiredMode = Schema.RequiredMode.REQUIRED)
-    private String choices;
+    private List<String> choices;
 
     @NotNull(message = "评分结果 id不能为空")
     @Schema(description = "评分结果 id",requiredMode = Schema.RequiredMode.REQUIRED)

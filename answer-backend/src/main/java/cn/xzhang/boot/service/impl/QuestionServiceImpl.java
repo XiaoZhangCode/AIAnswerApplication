@@ -1,12 +1,16 @@
 package cn.xzhang.boot.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
 import cn.xzhang.boot.common.exception.ServiceException;
 import cn.xzhang.boot.common.pojo.PageResult;
+import cn.xzhang.boot.mapper.AppMapper;
 import cn.xzhang.boot.mapper.QuestionMapper;
 import cn.xzhang.boot.model.dto.question.QuestionAddReqDTO;
+import cn.xzhang.boot.model.dto.question.QuestionDTO;
 import cn.xzhang.boot.model.dto.question.QuestionPageReqDTO;
 import cn.xzhang.boot.model.dto.question.QuestionUpdateReqDTO;
+import cn.xzhang.boot.model.entity.App;
 import cn.xzhang.boot.model.entity.Question;
 import cn.xzhang.boot.model.vo.question.QuestionSimpleVo;
 import cn.xzhang.boot.model.vo.question.QuestionVo;
@@ -33,6 +37,10 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     @Resource
     private QuestionMapper questionMapper;
 
+    @Resource
+    private AppMapper appMapper;
+
+
     /**
      * 添加新题目
      *
@@ -41,8 +49,13 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
      */
     @Override
     public long addQuestion(QuestionAddReqDTO questionReqDTO) {
+        // 判断应用是否存在
+        if (appMapper.selectCount(App::getId, questionReqDTO.getAppId()) == 0) {
+            throw exception(APP_NOT_EXIST);
+        }
         Question question = new Question();
         BeanUtil.copyProperties(questionReqDTO, question);
+        question.setQuestionContent(JSONUtil.toJsonStr(questionReqDTO.getQuestionContent()));
         if (!this.save(question)) {
             throw exception(ADD_FAIL);
         }
@@ -57,11 +70,16 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
      */
     @Override
     public boolean updateQuestion(QuestionUpdateReqDTO questionReqDTO) {
+        // 判断应用是否存在
+        if (appMapper.selectCount(App::getId, questionReqDTO.getAppId()) == 0) {
+            throw exception(APP_NOT_EXIST);
+        }
         if (questionReqDTO.getId() == null) {
             throw exception(BAD_REQUEST);
         }
         Question question = new Question();
         BeanUtil.copyProperties(questionReqDTO, question);
+        question.setQuestionContent(JSONUtil.toJsonStr(questionReqDTO.getQuestionContent()));
         boolean b = this.updateById(question);
         if (!b) {
             throw exception(UPDATE_FAIL);
@@ -100,7 +118,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             return null;
         }
         QuestionSimpleVo questionSimpleVo = new QuestionSimpleVo();
-        BeanUtil.copyProperties(question, questionSimpleVo);
+        BeanUtil.copyProperties(question, questionSimpleVo, "questionContent");
+        questionSimpleVo.setQuestionContent(JSONUtil.toList(question.getQuestionContent(), QuestionDTO.class));
         return questionSimpleVo;
     }
 
@@ -118,7 +137,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         }
         List<QuestionVo> questionVos = pageResult.getList().stream().map(question -> {
             QuestionVo questionVo = new QuestionVo();
-            BeanUtil.copyProperties(question, questionVo);
+            BeanUtil.copyProperties(question, questionVo, "questionContent");
+            questionVo.setQuestionContent(JSONUtil.toList(question.getQuestionContent(), QuestionDTO.class));
             return questionVo;
         }).collect(Collectors.toList());
         return new PageResult<>(questionVos, pageResult.getTotal());
@@ -130,7 +150,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             return null;
         }
         QuestionVo questionVo = new QuestionVo();
-        BeanUtil.copyProperties(question, questionVo);
+        BeanUtil.copyProperties(question, questionVo, "questionContent");
+        questionVo.setQuestionContent(JSONUtil.toList(question.getQuestionContent(), QuestionDTO.class));
         return questionVo;
     }
 

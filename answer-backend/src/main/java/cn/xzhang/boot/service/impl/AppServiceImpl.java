@@ -8,7 +8,9 @@ import cn.xzhang.boot.mapper.AppMapper;
 import cn.xzhang.boot.model.dto.app.AppAddReqDTO;
 import cn.xzhang.boot.model.dto.app.AppPageReqDTO;
 import cn.xzhang.boot.model.dto.app.AppUpdateReqDTO;
+import cn.xzhang.boot.model.dto.app.ReviewRequestDTO;
 import cn.xzhang.boot.model.entity.App;
+import cn.xzhang.boot.model.enums.ReviewStatusEnum;
 import cn.xzhang.boot.model.vo.app.AppSimpleVo;
 import cn.xzhang.boot.model.vo.app.AppVo;
 import cn.xzhang.boot.service.AppService;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -147,6 +150,40 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
             return appVo;
         }
         return null;
+    }
+
+    @Override
+    public void reviewApp(ReviewRequestDTO reviewRequest) {
+        Long id = reviewRequest.getId();
+        Integer reviewStatus = reviewRequest.getReviewStatus();
+
+        // 校验审核状态的有效性
+        ReviewStatusEnum reviewStatusEnum = ReviewStatusEnum.getEnumByValue(reviewStatus);
+        if (id == null || reviewStatusEnum == null) {
+            throw exception(BAD_REQUEST_PARAM_ERROR);
+        }
+
+        // 检查应用是否存在
+        App oldApp = this.getById(id);
+        if (oldApp == null) {
+            throw exception(APP_NOT_EXIST);
+        }
+
+        // 判断是否已经是相同的审核状态
+        if (oldApp.getReviewStatus().equals(reviewStatus)) {
+            throw exception(REVIEW_REPEAT);
+        }
+
+        // 更新应用的审核状态
+        App app = new App();
+        app.setId(id);
+        app.setReviewStatus(reviewStatus);
+        app.setReviewerId(StpUtil.getLoginIdAsLong());
+        app.setReviewTime(new Date());
+        boolean result = this.updateById(app);
+        if (!result) {
+            throw exception(APP_REVIEW_FAIL);
+        }
     }
 
 
