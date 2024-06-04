@@ -26,7 +26,7 @@ import static cn.xzhang.boot.common.exception.enums.GlobalErrorCodeConstants.BAD
  *
  * @author <a href="https://github.com/XiaoZhangCode">XiaoZhangCode</a>
  */
-@Tag(name = "管理后台 - 答题记录管理")
+@Tag(name = "答题记录-UserAnswer")
 @RestController
 @RequestMapping("/user-answer")
 public class UserAnswerController {

@@ -2,7 +2,6 @@ package cn.xzhang.boot.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
-import cn.dev33.satoken.stp.StpUtil;
 import cn.xzhang.boot.common.pojo.CommonResult;
 import cn.xzhang.boot.common.pojo.PageResult;
 import cn.xzhang.boot.constant.UserConstant;
@@ -11,29 +10,27 @@ import cn.xzhang.boot.model.dto.app.AppPageReqDTO;
 import cn.xzhang.boot.model.dto.app.AppUpdateReqDTO;
 import cn.xzhang.boot.model.dto.app.ReviewRequestDTO;
 import cn.xzhang.boot.model.entity.App;
-import cn.xzhang.boot.model.enums.ReviewStatusEnum;
 import cn.xzhang.boot.model.vo.app.AppSimpleVo;
 import cn.xzhang.boot.model.vo.app.AppVo;
 import cn.xzhang.boot.service.AppService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
-import java.util.Date;
 
 import static cn.xzhang.boot.common.exception.enums.GlobalErrorCodeConstants.*;
-import static cn.xzhang.boot.common.exception.util.ServiceExceptionUtil.exception;
 
 /**
  * 应用管理
  *
  * @author <a href="https://github.com/XiaoZhangCode">XiaoZhangCode</a>
  */
-@Tag(name = "管理后台 - 应用管理")
+@Tag(name = "应用管理-APP")
 @RestController
 @RequestMapping("/app")
 public class AppController {

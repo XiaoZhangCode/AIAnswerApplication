@@ -26,7 +26,7 @@ import static cn.xzhang.boot.common.exception.enums.GlobalErrorCodeConstants.BAD
  *
  * @author <a href="https://github.com/XiaoZhangCode">XiaoZhangCode</a>
  */
-@Tag(name = "管理后台 - 评分结果管理")
+@Tag(name = "评分结果-ScoringResult")
 @RestController
 @RequestMapping("/scoring-result")
 public class ScoringResultController {

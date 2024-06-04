@@ -35,7 +35,7 @@ import static cn.xzhang.boot.common.exception.util.ServiceExceptionUtil.exceptio
 @RestController
 @RequestMapping("/file")
 @Slf4j
-@Tag(name = "通用 - 文件上传接口")
+@Tag(name = "通用文件上传-File")
 public class FileController {
 
     @Resource

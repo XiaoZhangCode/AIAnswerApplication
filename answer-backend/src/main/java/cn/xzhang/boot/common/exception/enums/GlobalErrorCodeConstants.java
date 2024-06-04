@@ -4,6 +4,7 @@ import cn.xzhang.boot.common.exception.ErrorCode;
 
 /**
  * 全局错误码枚举
+ *
  * @author <a href="https://github.com/XiaoZhangCode">XiaoZhangCode</a>
  */
 public interface GlobalErrorCodeConstants {
@@ -49,8 +50,11 @@ public interface GlobalErrorCodeConstants {
 
     ErrorCode APP_NOT_EXIST = new ErrorCode(4042, "应用玩失踪？确认一下它是否存在吧！");
     ErrorCode APP_REVIEW_FAIL = new ErrorCode(4226, "审核之路多坎坷，这次没过，咱们再接再厉！");
-    //
-
+    ErrorCode APP_STRATEGY_NOT_FOUND = new ErrorCode(4227, "哎呀，应用的小脑瓜里没找到策略，迷路了吗？快去检查一下配置吧！");
+    ErrorCode APP_REVIEW_NOT_PASS = new ErrorCode(4228, "应用审核小哥还没点头呢，再耐心等等，精彩即将解锁！");
+    ErrorCode OPERATION_ERROR = new ErrorCode(4229, "这次操作有点小插曲，别急，深呼吸，再来一次！");
+    ErrorCode SCORE_ERROR = new ErrorCode(4230, "评分小火箭暂时熄火了，稍息片刻，我们继续冲向高分！");
+    ErrorCode QUESTION_EXIST = new ErrorCode(4225, "这道题目已经在这儿安家啦！不如发挥创意，给咱们来个独家首映吧！");
 
     /**
      * 是否为服务端错误，参考 HTTP 5XX 错误码段

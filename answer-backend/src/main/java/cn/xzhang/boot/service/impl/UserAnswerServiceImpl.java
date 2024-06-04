@@ -11,10 +11,13 @@ import cn.xzhang.boot.model.dto.useranswer.UserAnswerPageReqDTO;
 import cn.xzhang.boot.model.dto.useranswer.UserAnswerUpdateReqDTO;
 import cn.xzhang.boot.model.entity.App;
 import cn.xzhang.boot.model.entity.UserAnswer;
+import cn.xzhang.boot.model.enums.ReviewStatusEnum;
 import cn.xzhang.boot.model.vo.useranswer.UserAnswerSimpleVo;
 import cn.xzhang.boot.model.vo.useranswer.UserAnswerVo;
+import cn.xzhang.boot.scoring.ScoringStrategyExecutor;
 import cn.xzhang.boot.service.UserAnswerService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +41,9 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
     @Resource
     private AppMapper appMapper;
 
+    @Resource
+    private ScoringStrategyExecutor scoringStrategyExecutor;
+
 
     /**
      * 添加新答题记录
@@ -51,11 +57,35 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         if (appMapper.selectCount(App::getId, userAnswerReqDTO.getAppId()) == 0) {
             throw exception(APP_NOT_EXIST);
         }
+        // 在此处将实体类和 DTO 进行转换
         UserAnswer userAnswer = new UserAnswer();
-        BeanUtil.copyProperties(userAnswerReqDTO, userAnswer);
-        userAnswer.setChoices(JSONUtil.toJsonStr(userAnswerReqDTO.getChoices()));
-        if (!this.save(userAnswer)) {
-            throw exception(ADD_FAIL);
+        BeanUtils.copyProperties(userAnswerReqDTO, userAnswer);
+        List<String> choices = userAnswerReqDTO.getChoices();
+        userAnswer.setChoices(JSONUtil.toJsonStr(choices));
+        // 判断 app 是否存在
+        Long appId = userAnswerReqDTO.getAppId();
+        if (appMapper.selectCount(App::getId, appId) == 0) {
+            throw exception(APP_NOT_EXIST);
+        }
+        App app = appMapper.selectById(appId);
+        if (!ReviewStatusEnum.PASS.equals(ReviewStatusEnum.getEnumByValue(app.getReviewStatus()))) {
+            throw exception(APP_REVIEW_NOT_PASS);
+        }
+        // 写入数据库
+        int result = userAnswerMapper.insert(userAnswer);
+        if (result == 0) {
+            throw exception(OPERATION_ERROR);
+        }
+        // 返回新写入的数据 id
+        long newUserAnswerId = userAnswer.getId();
+        // 调用评分模块
+        try {
+            UserAnswer userAnswerWithResult = scoringStrategyExecutor.doScore(choices, app);
+            userAnswerWithResult.setId(newUserAnswerId);
+            userAnswerMapper.updateById(userAnswerWithResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw exception(SCORE_ERROR);
         }
         return userAnswer.getId();
     }

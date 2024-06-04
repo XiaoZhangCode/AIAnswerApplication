@@ -75,12 +75,6 @@ springdoc:
   api-docs:
     # 设置API文档的访问路径
     path: /v3/api-docs
-  # 配置应用的分组信息
-  group-configs:
-    # 定义一个分组配置
-    - group: 'default' # 设置分组名称
-      paths-to-match: '/**' # 设置匹配所有路径
-      packages-to-scan: cn.xzhang.boot.controller # 设置需要扫描的包路径
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true

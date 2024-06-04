@@ -29,7 +29,7 @@ import static cn.xzhang.boot.common.exception.util.ServiceExceptionUtil.exceptio
  *
  * @author <a href="https://github.com/XiaoZhangCode">XiaoZhangCode</a>
  */
-@Tag(name = "管理后台 - 用户管理")
+@Tag(name = "用户管理-User")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/user")

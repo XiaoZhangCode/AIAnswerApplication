@@ -53,6 +53,10 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         if (appMapper.selectCount(App::getId, questionReqDTO.getAppId()) == 0) {
             throw exception(APP_NOT_EXIST);
         }
+        // 判断是否已有题目
+        if (questionMapper.selectCount(Question::getAppId, questionReqDTO.getAppId()) > 0) {
+            throw exception(QUESTION_EXIST);
+        }
         Question question = new Question();
         BeanUtil.copyProperties(questionReqDTO, question);
         question.setQuestionContent(JSONUtil.toJsonStr(questionReqDTO.getQuestionContent()));
@@ -135,12 +139,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         if (pageResult.getList() == null) {
             return PageResult.empty();
         }
-        List<QuestionVo> questionVos = pageResult.getList().stream().map(question -> {
-            QuestionVo questionVo = new QuestionVo();
-            BeanUtil.copyProperties(question, questionVo, "questionContent");
-            questionVo.setQuestionContent(JSONUtil.toList(question.getQuestionContent(), QuestionDTO.class));
-            return questionVo;
-        }).collect(Collectors.toList());
+        List<QuestionVo> questionVos = pageResult.getList().stream().map(QuestionVo::objToVo).collect(Collectors.toList());
         return new PageResult<>(questionVos, pageResult.getTotal());
     }
 
@@ -149,10 +148,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         if (question == null) {
             return null;
         }
-        QuestionVo questionVo = new QuestionVo();
-        BeanUtil.copyProperties(question, questionVo, "questionContent");
-        questionVo.setQuestionContent(JSONUtil.toList(question.getQuestionContent(), QuestionDTO.class));
-        return questionVo;
+        return QuestionVo.objToVo(question);
     }
 
 }
