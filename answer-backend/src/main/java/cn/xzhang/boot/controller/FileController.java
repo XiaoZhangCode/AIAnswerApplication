@@ -11,13 +11,13 @@ import cn.xzhang.boot.model.enums.FileUploadBizEnum;
 import cn.xzhang.boot.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -48,10 +48,13 @@ public class FileController {
     @PostMapping("/upload")
     @SaCheckLogin
     @Operation(summary = "文件上传")
-    @Parameter(name = "file", description = "文件", required = true)
-    public CommonResult<String> uploadFile(@RequestPart("file") MultipartFile multipartFile,
-                                           UploadFileRequest uploadFileRequest) {
-        String biz = uploadFileRequest.getBiz();
+    public CommonResult<String> uploadFile(
+            @RequestPart(value = "file")
+            @RequestParam("file")
+            @Parameter(description = "上传的文件", required = true,
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE, schema = @Schema(implementation = MultipartFile.class)))
+            MultipartFile multipartFile,
+            String biz) {
         FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
         if (fileUploadBizEnum == null) {
             throw exception(BAD_REQUEST);

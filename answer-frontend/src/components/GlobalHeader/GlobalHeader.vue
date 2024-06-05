@@ -27,12 +27,34 @@
     </a-col>
     <a-col flex="100px">
       <a-col flex="100px">
-        <div v-if="loginUserStore.loginUser.id">
+        <div
+          v-if="loginUserStore.loginUser.id"
+          style="
+            display: flex;
+            justify-content: space-between;
+            vertical-align: center;
+          "
+        >
           <a-avatar
             :src="loginUserStore.loginUser.userAvatar"
-            style="margin-right: 8px"
+            style="cursor: pointer"
           />
-          {{ loginUserStore.loginUser.userName ?? "无名" }}
+          <a-dropdown trigger="hover">
+            <a-button
+              style="
+                background-color: transparent;
+                margin-right: 50px;
+                font-size: 16px;
+                margin-top: 5px;
+              "
+            >
+              {{ loginUserStore.loginUser.userName ?? "无名" }}
+            </a-button>
+            <template #content>
+              <a-doption>个人信息</a-doption>
+              <a-doption @click="logoutHandler">退出登录</a-doption>
+            </template>
+          </a-dropdown>
         </div>
         <div v-else>
           <a-button type="primary" href="/user/login">登录</a-button>
@@ -62,7 +84,9 @@ import { routes } from "@/router/routes";
 import { RouteRecordRaw, useRouter } from "vue-router";
 
 import { ref } from "vue";
-import { useLoginUserStore } from "@/store/userStore";
+import { useLoginUserStore } from "@/store/user/userStore";
+import checkAccess from "@/access/checkAccess";
+import { logout } from "@/api/user";
 
 const loginUserStore = useLoginUserStore();
 loginUserStore.fetchLoginUser();
@@ -97,7 +121,11 @@ function flattenVisibleRoutes(routes: RouteRecordRaw[]): RouteRecordRaw[] {
 }
 
 // 展示在菜单的路由数组
-const visibleRoutes = flattenVisibleRoutes(routes);
+const visibleRoutes = flattenVisibleRoutes(routes).filter((item) => {
+  // 根据权限过滤菜单
+  return checkAccess(loginUserStore.loginUser, item.meta?.access as string);
+});
+
 // 路由跳转事件
 const doMenuClick = (key: string) => {
   router.push({
@@ -111,4 +139,10 @@ const selectedKeys = ref([router.currentRoute.value.path]);
 router.afterEach((to) => {
   selectedKeys.value = [to.path];
 });
+
+// 注销
+const logoutHandler = async () => {
+  await logout();
+  await router.push("/user/login");
+};
 </script>

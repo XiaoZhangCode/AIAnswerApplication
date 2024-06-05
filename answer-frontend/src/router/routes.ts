@@ -4,6 +4,8 @@ import UserLayout from "@/layouts/UserLayout/UserLayout.vue";
 import UserLoginVieW from "@/views/user/UserLoginVieW.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
 import BasicLayout from "@/layouts/BasicLayout/BasicLayout.vue";
+import ACCESS_ENUM from "@/access/accessEnum";
+import NoAuthView from "@/views/NoAuthView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -19,6 +21,22 @@ export const routes: Array<RouteRecordRaw> = [
         path: "about",
         name: "about",
         component: () => import("../views/AboutView.vue"),
+      },
+      {
+        path: "admin",
+        name: "管理页面",
+        component: HomeView,
+        meta: {
+          access: ACCESS_ENUM.ADMIN,
+        },
+      },
+      {
+        path: "noAuth",
+        name: "无权限",
+        component: NoAuthView,
+        meta: {
+          hideInMenu: true,
+        },
       },
     ],
   },

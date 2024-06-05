@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import ACCESS_ENUM from "@/access/accessEnum";
 import { getLoginUser } from "@/api/user";
 
 export const useLoginUserStore = defineStore("loginUser", () => {
@@ -9,9 +10,10 @@ export const useLoginUserStore = defineStore("loginUser", () => {
 
   async function fetchLoginUser() {
     const res = await getLoginUser();
-    console.log(res);
     if (res?.code === 0 && res.data) {
       setLoginUser(res.data as API.LoginUserVO);
+    } else {
+      loginUser.value = { userRole: ACCESS_ENUM.NOT_LOGIN };
     }
   }
 

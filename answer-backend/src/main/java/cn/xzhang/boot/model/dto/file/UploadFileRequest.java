@@ -12,7 +12,7 @@ import lombok.Data;
 @Schema(description = "文件上传请求")
 public class UploadFileRequest {
 
-    @Schema(description = "业务",requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "业务", requiredMode = Schema.RequiredMode.REQUIRED)
     private String biz;
 
 }
