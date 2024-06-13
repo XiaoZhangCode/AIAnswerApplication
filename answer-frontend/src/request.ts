@@ -149,7 +149,6 @@ const getConfig = (): RequestConfig => {
     ],
     requestInterceptors: [
       (config: IRequestOptions) => {
-        console.log("request config:", config);
         // 请求拦截器
         return config;
       },

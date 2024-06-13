@@ -45,7 +45,7 @@ public class FileController {
     private UserService userService;
 
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @SaCheckLogin
     @Operation(summary = "文件上传")
     public CommonResult<String> uploadFile(
@@ -54,6 +54,8 @@ public class FileController {
             @Parameter(description = "上传的文件", required = true,
                     content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE, schema = @Schema(implementation = MultipartFile.class)))
             MultipartFile multipartFile,
+            @RequestParam("biz")
+            @Parameter(required = true, description = "业务枚举")
             String biz) {
         FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
         if (fileUploadBizEnum == null) {

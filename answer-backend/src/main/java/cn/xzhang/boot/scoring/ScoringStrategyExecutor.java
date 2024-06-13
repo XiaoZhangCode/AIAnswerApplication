@@ -33,8 +33,8 @@ public class ScoringStrategyExecutor {
      * @throws Exception
      */
     public UserAnswer doScore(List<String> choiceList, App app) {
-        Byte appType = app.getAppType();
-        Byte appScoringStrategy = app.getScoringStrategy();
+        Integer appType = app.getAppType();
+        Integer appScoringStrategy = app.getScoringStrategy();
         if (appType == null || appScoringStrategy == null) {
             throw exception(APP_STRATEGY_NOT_FOUND);
         }

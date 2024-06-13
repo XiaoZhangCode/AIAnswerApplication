@@ -1,17 +1,21 @@
 package cn.xzhang.boot.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
 import cn.xzhang.boot.common.exception.ServiceException;
 import cn.xzhang.boot.common.pojo.PageResult;
 import cn.xzhang.boot.mapper.AppMapper;
 import cn.xzhang.boot.mapper.UserAnswerMapper;
+import cn.xzhang.boot.mapper.UserMapper;
 import cn.xzhang.boot.model.dto.useranswer.UserAnswerAddReqDTO;
 import cn.xzhang.boot.model.dto.useranswer.UserAnswerPageReqDTO;
 import cn.xzhang.boot.model.dto.useranswer.UserAnswerUpdateReqDTO;
 import cn.xzhang.boot.model.entity.App;
+import cn.xzhang.boot.model.entity.User;
 import cn.xzhang.boot.model.entity.UserAnswer;
 import cn.xzhang.boot.model.enums.ReviewStatusEnum;
+import cn.xzhang.boot.model.vo.user.UserVo;
 import cn.xzhang.boot.model.vo.useranswer.UserAnswerSimpleVo;
 import cn.xzhang.boot.model.vo.useranswer.UserAnswerVo;
 import cn.xzhang.boot.scoring.ScoringStrategyExecutor;
@@ -23,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static cn.xzhang.boot.common.exception.enums.GlobalErrorCodeConstants.*;
@@ -43,6 +49,9 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
 
     @Resource
     private ScoringStrategyExecutor scoringStrategyExecutor;
+
+    @Resource
+    private UserMapper userMapper;
 
 
     /**
@@ -148,6 +157,11 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         UserAnswerSimpleVo userAnswerSimpleVo = new UserAnswerSimpleVo();
         BeanUtil.copyProperties(userAnswer, userAnswerSimpleVo);
         userAnswerSimpleVo.setChoices(JSONUtil.toJsonStr(userAnswer.getChoices()));
+        userAnswerSimpleVo.setAppName(appMapper.selectById(userAnswer.getAppId()).getAppName());
+        UserVo userVo = new UserVo();
+        User user = userMapper.selectById(userAnswer.getCreator());
+        BeanUtil.copyProperties(user, userVo);
+        userAnswerSimpleVo.setUserInfo(userVo);
         return userAnswerSimpleVo;
     }
 
@@ -163,12 +177,30 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         if (pageResult.getList() == null) {
             return PageResult.empty();
         }
-        List<UserAnswerVo> userAnswerVos = pageResult.getList().stream().map(userAnswer -> {
-            UserAnswerVo userAnswerVo = new UserAnswerVo();
-            BeanUtil.copyProperties(userAnswer, userAnswerVo);
-            userAnswerVo.setChoices(JSONUtil.toJsonStr(userAnswer.getChoices()));
-            return userAnswerVo;
-        }).collect(Collectors.toList());
+        List<UserAnswer> userAnswerList = pageResult.getList();
+        Set<Long> appIdSets = userAnswerList.stream().map(UserAnswer::getAppId).collect(Collectors.toSet());
+        List<App> appList = appMapper.selectBatchIds(appIdSets);
+        Map<Long, App> appMap = appList.stream().collect(Collectors.toMap(App::getId, app -> app));
+
+        List<User> users = userMapper.selectBatchIds(userAnswerList.stream().map(UserAnswer::getCreator).collect(Collectors.toSet()));
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, user -> user));
+
+        List<UserAnswerVo> userAnswerVos = pageResult.getList().stream()
+                .map(userAnswer -> {
+                    UserAnswerVo userAnswerVo = new UserAnswerVo();
+                    BeanUtil.copyProperties(userAnswer, userAnswerVo);
+                    userAnswerVo.setChoices(JSONUtil.toJsonStr(userAnswer.getChoices()));
+                    App app = appMap.get(userAnswer.getAppId());
+                    if (app != null) {
+                        userAnswerVo.setAppName(app.getAppName());
+                    }
+                    if (userMap.get(Long.valueOf(userAnswer.getCreator())) != null) {
+                        UserVo userVo = new UserVo();
+                        BeanUtil.copyProperties(userMap.get(Long.valueOf(userAnswer.getCreator())), userVo);
+                        userAnswerVo.setUserInfo(userVo);
+                    }
+                    return userAnswerVo;
+                }).collect(Collectors.toList());
         return new PageResult<>(userAnswerVos, pageResult.getTotal());
     }
 

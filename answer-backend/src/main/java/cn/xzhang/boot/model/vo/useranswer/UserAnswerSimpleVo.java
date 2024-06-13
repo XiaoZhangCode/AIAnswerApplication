@@ -1,6 +1,7 @@
 package cn.xzhang.boot.model.vo.useranswer;
 
 
+import cn.xzhang.boot.model.vo.user.UserVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,11 +25,17 @@ public class UserAnswerSimpleVo implements Serializable {
     @Schema(description = "应用 id")
     private Long appId;
 
+    @Schema(description = "应用名称")
+    private String appName;
+
+    @Schema(description = "用户信息")
+    private UserVo userInfo;
+
     @Schema(description = "应用类型（0-得分类，1-角色测评类）")
-    private Byte appType;
+    private Integer appType;
 
     @Schema(description = "评分策略（0-自定义，1-AI）")
-    private Byte scoringStrategy;
+    private Integer scoringStrategy;
 
     @Schema(description = "用户答案（JSON 数组）",requiredMode = Schema.RequiredMode.REQUIRED)
     private String choices;
@@ -48,5 +55,8 @@ public class UserAnswerSimpleVo implements Serializable {
     @Schema(description = "得分",requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer resultScore;
 
+    @Schema(description = "创建时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
 }

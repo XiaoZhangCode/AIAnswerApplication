@@ -21,23 +21,17 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class UserAnswerPageReqDTO extends PageParam implements Serializable {
 
-
-
     @Schema(description = "id")
     private Long id;
-
-
 
     @Schema(description = "应用 id")
     private Long appId;
 
-
     @Schema(description = "应用类型（0-得分类，1-角色测评类）")
-    private Byte appType;
-
+    private Integer appType;
 
     @Schema(description = "评分策略（0-自定义，1-AI）")
-    private Byte scoringStrategy;
+    private Integer scoringStrategy;
 
 
     @NotNull(message = "用户答案（JSON 数组）不能为空")
@@ -68,6 +62,9 @@ public class UserAnswerPageReqDTO extends PageParam implements Serializable {
     @NotNull(message = "得分不能为空")
     @Schema(description = "得分",requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer resultScore;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Long userId;
 
 
 

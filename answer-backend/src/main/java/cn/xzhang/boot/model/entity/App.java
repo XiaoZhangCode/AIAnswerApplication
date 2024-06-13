@@ -44,10 +44,10 @@ public class App extends BaseDO implements Serializable {
     private String appIcon;
 
     @Schema(description = "应用类型（0-得分类，1-测评类）")
-    private Byte appType;
+    private Integer appType;
 
     @Schema(description = "评分策略（0-自定义，1-AI）")
-    private Byte scoringStrategy;
+    private Integer scoringStrategy;
 
     @Schema(description = "审核状态：0-待审核, 1-通过, 2-拒绝")
     private Integer reviewStatus;

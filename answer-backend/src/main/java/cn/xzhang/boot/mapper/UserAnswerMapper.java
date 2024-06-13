@@ -10,8 +10,8 @@ import java.util.Objects;
 
 /**
  * @author XiaoZhangCode
- * @description 针对表【useranswer(评分结果表)】的数据库操作Mapper
  * @author <a href="https://github.com/XiaoZhangCode">XiaoZhangCode</a>
+ * @description 针对表【useranswer(评分结果表)】的数据库操作Mapper
  */
 public interface UserAnswerMapper extends BaseMapperPlus<UserAnswer> {
 
@@ -21,6 +21,7 @@ public interface UserAnswerMapper extends BaseMapperPlus<UserAnswer> {
                 .eq(Objects.nonNull(useranswerPageReqDTO.getResultName()), UserAnswer::getResultName, useranswerPageReqDTO.getResultName())
                 .eq(Objects.nonNull(useranswerPageReqDTO.getResultDesc()), UserAnswer::getResultDesc, useranswerPageReqDTO.getResultDesc())
                 .eq(Objects.nonNull(useranswerPageReqDTO.getResultPicture()), UserAnswer::getResultPicture, useranswerPageReqDTO.getResultPicture())
+                .eq(Objects.nonNull(useranswerPageReqDTO.getUserId()), UserAnswer::getCreator, useranswerPageReqDTO.getUserId())
                 .orderByDesc(UserAnswer::getCreateTime)
 
         );

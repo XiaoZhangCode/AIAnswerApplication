@@ -1,15 +1,18 @@
 package cn.xzhang.boot.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.xzhang.boot.common.exception.ServiceException;
 import cn.xzhang.boot.common.pojo.PageResult;
 import cn.xzhang.boot.mapper.AppMapper;
 import cn.xzhang.boot.mapper.ScoringResultMapper;
+import cn.xzhang.boot.mapper.UserMapper;
 import cn.xzhang.boot.model.dto.scoringresult.ScoringResultAddReqDTO;
 import cn.xzhang.boot.model.dto.scoringresult.ScoringResultPageReqDTO;
 import cn.xzhang.boot.model.dto.scoringresult.ScoringResultUpdateReqDTO;
 import cn.xzhang.boot.model.entity.App;
 import cn.xzhang.boot.model.entity.ScoringResult;
+import cn.xzhang.boot.model.entity.User;
 import cn.xzhang.boot.model.vo.scoringresult.ScoringResultSimpleVo;
 import cn.xzhang.boot.model.vo.scoringresult.ScoringResultVo;
 import cn.xzhang.boot.service.ScoringResultService;
@@ -18,11 +21,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static cn.xzhang.boot.common.exception.enums.GlobalErrorCodeConstants.*;
 import static cn.xzhang.boot.common.exception.util.ServiceExceptionUtil.exception;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * 针对表【scoringResult(评分结果表)】的数据库操作Service实现
@@ -37,6 +44,9 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
 
     @Resource
     private AppMapper appMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
 
     /**
@@ -132,9 +142,44 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
         if (pageResult.getList() == null) {
             return PageResult.empty();
         }
+        List<ScoringResult> list = pageResult.getList();
+        if (list.isEmpty()) {
+            return PageResult.empty();
+        }
+        // 应用名称
+        Set<Long> appIds = list.stream().map(ScoringResult::getAppId).collect(Collectors.toSet());
+        Map<Long, App> appMap;
+        if (CollUtil.isNotEmpty(appIds)) {
+            List<App> apps = appMapper.selectList(App::getId, appIds);
+            appMap = apps.stream().collect(toMap(App::getId, app -> app));
+        } else {
+            appMap = null;
+        }
+        // 用户名称
+        Set<String> userIdsStrs = list.stream().map(ScoringResult::getCreator).collect(Collectors.toSet());
+        Map<Long, User> userMap;
+        if (CollUtil.isNotEmpty(userIdsStrs)) {
+            List<User> users = userMapper.selectList(User::getId, userIdsStrs);
+            userMap = users.stream().collect(toMap(User::getId, user -> user));
+        } else {
+            userMap = null;
+        }
+
         List<ScoringResultVo> scoringResultVos = pageResult.getList().stream().map(scoringResult -> {
             ScoringResultVo scoringResultVo = new ScoringResultVo();
             BeanUtil.copyProperties(scoringResult, scoringResultVo);
+            if (appMap != null) {
+                App app = appMap.get(scoringResult.getAppId());
+                if (app != null) {
+                    scoringResultVo.setAppName(app.getAppName());
+                }
+            }
+            if (userMap != null) {
+                User user = userMap.get(scoringResult.getCreator());
+                if (user != null) {
+                    scoringResultVo.setUserInfo(user);
+                }
+            }
             return scoringResultVo;
         }).collect(Collectors.toList());
         return new PageResult<>(scoringResultVos, pageResult.getTotal());

@@ -69,4 +69,6 @@ public interface AppService extends IService<App> {
      * @param reviewRequest 审核请求
      */
     void reviewApp(ReviewRequestDTO reviewRequest);
+
+    PageResult<AppSimpleVo> getAppSimplePage(AppPageReqDTO appPageReqDTO);
 }

@@ -1,6 +1,8 @@
 package cn.xzhang.boot.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.xzhang.boot.common.pojo.CommonResult;
 import cn.xzhang.boot.common.pojo.PageResult;
 import cn.xzhang.boot.constant.UserConstant;
@@ -113,6 +115,15 @@ public class UserAnswerController {
     @SaCheckRole(UserConstant.ADMIN_ROLE)
     public CommonResult<PageResult<UserAnswerVo>> getUserAnswerPage(UserAnswerPageReqDTO userAnswerPageReqDTO) {
         // 调用服务层方法，获取分页信息，并返回结果
+        return CommonResult.success(userAnswerService.getUserAnswerPage(userAnswerPageReqDTO));
+    }
+
+    @GetMapping("/myPage")
+    @Operation(summary = "分页获取我的答题记录列表")
+    @SaCheckLogin
+    public CommonResult<PageResult<UserAnswerVo>> getUserMyAnswerPage(UserAnswerPageReqDTO userAnswerPageReqDTO) {
+        // 调用服务层方法，获取分页信息，并返回结果
+        userAnswerPageReqDTO.setUserId(StpUtil.getLoginIdAsLong());
         return CommonResult.success(userAnswerService.getUserAnswerPage(userAnswerPageReqDTO));
     }
 

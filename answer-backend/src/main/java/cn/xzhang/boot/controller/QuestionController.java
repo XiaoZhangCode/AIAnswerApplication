@@ -95,6 +95,19 @@ public class QuestionController {
         return CommonResult.success(questionService.getQuestionVO(questionService.getById(id)));
     }
 
+    @GetMapping("/get/app")
+    @Operation(summary = "根据应用ID获取题目信息")
+    @Parameter(name = "appId", description = "应用ID",required = true)
+    public CommonResult<QuestionVo> getQuestionByAppId(@RequestParam("appId") Long appId) {
+        // 检查传入的ID是否为空
+        if (appId == null) {
+            return CommonResult.error(BAD_REQUEST_PARAMS);
+        }
+        // 调用服务层方法，获取信息，并返回结果
+        return CommonResult.success(questionService.getQuestionByAppId(appId));
+    }
+
+
     @GetMapping("/get/vo")
     @Operation(summary = "获取题目简要信息")
     @Parameter(name = "id", description = "题目ID",required = true)

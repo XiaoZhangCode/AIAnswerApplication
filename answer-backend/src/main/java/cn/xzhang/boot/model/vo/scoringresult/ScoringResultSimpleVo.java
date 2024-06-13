@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 评分结果信息Vo
@@ -31,7 +32,7 @@ public class ScoringResultSimpleVo implements Serializable {
     private String resultPicture;
 
     @Schema(description = "结果属性集合 JSON，如 [I,S,T,J]",requiredMode = Schema.RequiredMode.REQUIRED)
-    private String resultProp;
+    private List<String> resultProp;
 
     @Schema(description = "结果得分范围，如 80，表示 80及以上的分数命中此结果",requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer resultScoreRange;

@@ -1,11 +1,13 @@
 package cn.xzhang.boot.model.vo.scoringresult;
 
+import cn.xzhang.boot.model.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 评分结果VO
@@ -29,7 +31,7 @@ public class ScoringResultVo implements Serializable {
     private String resultPicture;
 
     @Schema(description = "结果属性集合 JSON，如 [I,S,T,J]",requiredMode = Schema.RequiredMode.REQUIRED)
-    private String resultProp;
+    private List<String> resultProp;
 
     @Schema(description = "结果得分范围，如 80，表示 80及以上的分数命中此结果",requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer resultScoreRange;
@@ -37,4 +39,9 @@ public class ScoringResultVo implements Serializable {
     @Schema(description = "应用 id")
     private Long appId;
 
+    @Schema(description = "应用名称")
+    private String appName;
+
+    @Schema(description = "用户信息")
+    private User userInfo;
 }

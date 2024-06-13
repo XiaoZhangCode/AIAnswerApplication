@@ -62,4 +62,12 @@ public interface QuestionService extends IService<Question> {
      * @return 返回一个包含题目信息的QuestionVo对象。
      */
     QuestionVo getQuestionVO(Question question);
+
+    /**
+     * 根据应用id获取题目信息
+     *
+     * @param appId 应用id
+     * @return 返回题目信息
+     */
+    QuestionVo getQuestionByAppId(Long appId);
 }

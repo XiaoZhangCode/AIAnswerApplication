@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -32,7 +33,7 @@ public class ScoringResultBaseDTO implements Serializable {
 
     @NotNull(message = "结果属性集合 JSON，如 [I,S,T,J]不能为空")
     @Schema(description = "结果属性集合 JSON，如 [I,S,T,J]",requiredMode = Schema.RequiredMode.REQUIRED)
-    private String resultProp;
+    private List<String> resultProp;
 
     @NotNull(message = "结果得分范围，如 80，表示 80及以上的分数命中此结果不能为空")
     @Schema(description = "结果得分范围，如 80，表示 80及以上的分数命中此结果",requiredMode = Schema.RequiredMode.REQUIRED)

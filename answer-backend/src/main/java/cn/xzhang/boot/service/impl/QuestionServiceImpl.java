@@ -151,6 +151,12 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         return QuestionVo.objToVo(question);
     }
 
+    @Override
+    public QuestionVo getQuestionByAppId(Long appId) {
+        Question question = questionMapper.selectOne(Question::getAppId, appId);
+        return QuestionVo.objToVo(question);
+    }
+
 }
 
 

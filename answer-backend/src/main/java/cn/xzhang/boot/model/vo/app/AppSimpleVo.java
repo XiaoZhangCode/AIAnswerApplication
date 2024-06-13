@@ -31,13 +31,19 @@ public class AppSimpleVo implements Serializable {
     private String appIcon;
 
     @Schema(description = "应用类型（0-得分类，1-测评类）")
-    private Byte appType;
+    private int appType;
 
     @Schema(description = "评分策略（0-自定义，1-AI）")
-    private Byte scoringStrategy;
+    private int scoringStrategy;
 
     @Schema(description = "创建用户 id")
     private Long userId;
+
+    @Schema(description = "创建时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
+
+
 
 
 }

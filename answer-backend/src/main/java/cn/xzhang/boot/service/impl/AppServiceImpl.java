@@ -115,7 +115,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     @Override
     public AppSimpleVo getSimpleAppVO(App app) {
         if (app == null) {
-            return null;
+            return new AppSimpleVo();
         }
         AppSimpleVo appSimpleVo = new AppSimpleVo();
         BeanUtil.copyProperties(app, appSimpleVo);
@@ -149,7 +149,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
             BeanUtil.copyProperties(app, appVo);
             return appVo;
         }
-        return null;
+        return new AppVo();
     }
 
     @Override
@@ -184,6 +184,23 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         if (!result) {
             throw exception(APP_REVIEW_FAIL);
         }
+    }
+
+    @Override
+    public PageResult<AppSimpleVo> getAppSimplePage(AppPageReqDTO appPageReqDTO) {
+        PageResult<App> pageResult = appMapper.selectPage(appPageReqDTO);
+        if (pageResult.getList() == null) {
+            return PageResult.empty();
+        }
+        List<AppSimpleVo> appVos = pageResult.getList().stream()
+                .filter(app -> app.getReviewStatus().equals(ReviewStatusEnum.PASS.getValue()))
+                .map(app -> {
+                    AppSimpleVo appVo = new AppSimpleVo();
+                    BeanUtil.copyProperties(app, appVo);
+                    return appVo;
+                })
+                .collect(Collectors.toList());
+        return new PageResult<>(appVos, pageResult.getTotal());
     }
 
 

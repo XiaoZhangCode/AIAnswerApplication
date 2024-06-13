@@ -16,13 +16,17 @@
             <div class="title">问知空间</div>
           </div>
         </a-menu-item>
-        <a-menu-item
-          v-for="item in visibleRoutes"
-          :key="item.path"
-          mode="horizontal"
-        >
-          {{ item.name }}
-        </a-menu-item>
+        <template v-for="item in visibleRoutes">
+          <template v-if="item.children">
+            <a-sub-menu :key="item.path">
+              <template #title>{{ item.name }}</template>
+              <a-menu-item v-for="child in item.children" :key="child.path">
+                {{ child.name }}
+              </a-menu-item>
+            </a-sub-menu>
+          </template>
+          <a-menu-item v-else :key="item.path">{{ item.name }}</a-menu-item>
+        </template>
       </a-menu>
     </a-col>
     <a-col flex="100px">
@@ -65,6 +69,14 @@
 </template>
 
 <style scoped>
+#globalHeader {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(to right, #fefefe, #fff);
+}
+
 .title-bar {
   display: flex;
   align-items: center;
@@ -73,6 +85,7 @@
 .title {
   margin-left: 16px;
   color: black;
+  font-size: 20px;
 }
 
 .logo {
@@ -93,29 +106,34 @@ loginUserStore.fetchLoginUser();
 
 const router = useRouter();
 
-function flattenVisibleRoutes(routes: RouteRecordRaw[]): RouteRecordRaw[] {
-  let flatRoutes: RouteRecordRaw[] = [];
+function flattenVisibleRoutes(
+  routes: RouteRecordRaw[],
+  parentPath = ""
+): any[] {
+  let flatRoutes: any[] = [];
 
-  function processRoute(route: RouteRecordRaw, parentPath = "") {
+  routes.forEach((route) => {
     if (!route.meta?.hideInMenu) {
-      // 构建新的路径，如果有必要根据父路径进行调整
-      const newPath = parentPath + (parentPath ? "" : "") + route.path;
-
-      // 创建一个新路由记录，确保路径正确，并移除children属性以实现扁平化
-      const flatRoute = {
+      const parts = [parentPath, route.path].filter(Boolean); // 移除可能的空字符串
+      const newPath = parts.join("/").replace(/\/+/g, "/");
+      const menuItem = {
         ...route,
         path: newPath,
-        children: undefined,
-      } as RouteRecordRaw;
-      flatRoutes.push(flatRoute);
-      // 递归处理子路由，传递当前路径作为父路径
-      if (route.children) {
-        route.children.forEach((child) => processRoute(child, newPath));
+        children: route.children
+          ? flattenVisibleRoutes(route.children, newPath)
+          : undefined,
+      };
+      if (route.name) {
+        flatRoutes.push(menuItem);
+      } else {
+        let routes1 = flattenVisibleRoutes(
+          route.children as RouteRecordRaw[],
+          newPath
+        );
+        flatRoutes.push(...routes1);
       }
     }
-  }
-
-  routes.forEach((route) => processRoute(route));
+  });
 
   return flatRoutes;
 }

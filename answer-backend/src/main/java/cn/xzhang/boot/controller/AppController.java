@@ -112,6 +112,14 @@ public class AppController {
         return CommonResult.success(appService.getSimpleAppVO(app));
     }
 
+    @GetMapping("/get/vo/page")
+    @Operation(summary = "分页获取应用简要信息")
+    public CommonResult<PageResult<AppSimpleVo>> getAppSimplePage(AppPageReqDTO appPageReqDTO) {
+        // 调用服务层方法，获取分页信息，并返回结果
+        return CommonResult.success(appService.getAppSimplePage(appPageReqDTO));
+    }
+
+
     @GetMapping("/page")
     @Operation(summary = "分页获取应用列表")
     @SaCheckRole(UserConstant.ADMIN_ROLE)

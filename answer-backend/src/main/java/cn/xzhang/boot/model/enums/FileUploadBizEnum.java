@@ -17,7 +17,10 @@ import java.util.stream.Collectors;
 @Getter
 public enum FileUploadBizEnum {
     // 枚举类型定义
-    USER_AVATAR("用户头像", "user_avatar");
+    USER_AVATAR("用户头像", "user_avatar"),
+    QUESTION_IMG("题目图片", "question_img"),
+    APP_ICON("应用图标", "app_icon"),
+    ;
 
     // 枚举实例的文本描述和对应的值
     private final String text;
